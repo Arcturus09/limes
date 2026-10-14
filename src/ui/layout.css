@@ -3,23 +3,55 @@ body { min-width: 1024px; min-height: 700px; }
 
 #app {
   height: 100vh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
 }
 
-.pergamino {
+#mapa {
   background: var(--pergamino);
-  color: var(--tinta);
-  padding: 2rem 3rem;
   border: 2px solid var(--tinta);
+  /* El ancho se limita por la altura disponible para que el mapa nunca desborde */
+  width: min(100%, calc((100vh - 5rem) * 1.55));
 }
 
-.pergamino h1 {
-  margin: 0 0 0.5rem;
+#info {
+  margin: 0;
+  color: var(--pergamino);
+  font-style: italic;
+  min-height: 1.5em;
+}
+
+/* ---- Mapa ---- */
+.mapa { display: block; width: 100%; height: auto; }
+
+.mapa .rio { fill: var(--rio); }
+.mapa .nombre-rio {
+  fill: var(--pergamino);
   font-family: var(--fuente-inscripcion);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.6em;
+  font-size: 14px;
 }
 
-.pergamino p { margin: 0; color: var(--tinta-suave); font-style: italic; }
+.casilla { cursor: pointer; outline: none; }
+.casilla polygon { fill: var(--pergamino); stroke: var(--tinta-suave); stroke-width: 1; }
+.casilla.terreno-b polygon, .casilla.terreno-c polygon { fill: var(--pergamino-oscuro); }
+.casilla.terreno-V polygon { fill: var(--pergamino); }
+.casilla .trama { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.casilla.terreno-V .trama { stroke: var(--rio); }
+.casilla.terreno-A .trama, .casilla.terreno-C .trama { stroke: var(--oliva); }
+
+.casilla:hover polygon { stroke: var(--tinta); stroke-width: 2; }
+.casilla:focus-visible polygon { stroke: var(--oro); stroke-width: 3; }
+.casilla.elegida polygon { stroke: var(--oro); stroke-width: 4; }
+
+.nombre-lugar {
+  fill: var(--tinta);
+  font-family: var(--fuente-inscripcion);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}

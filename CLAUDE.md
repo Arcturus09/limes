@@ -240,6 +240,6 @@ Aquí vale el aspecto feo: fichas como cuadrados con texto. **No pulir.**
 ## 14. Estado actual
 
 - **Fase:** 0, en marcha.
-- **Último paso terminado:** 0.1 (estructura, `index.html` con fuentes, `theme.css` con los tokens, README, `.gitignore`, git). Node v26 instalado con Homebrew.
-- **Siguiente paso:** 0.2 (`hex.js` con tests y `render-map.js`).
+- **Último paso terminado:** 0.2 (`hex.js` con 8 tests, mapa del prototipo en `src/data/maps/prototype.js`, `render-map.js` con tramas SVG, clic y teclado, y `main.js`). Los filtros de pergamino y trazo a mano quedan para 3.7.
+- **Siguiente paso:** 0.3 (repositorio en GitHub y Pages; `gh` aún sin comprobar).
 - **Pendiente de Arturo:** nada que bloquee. Preguntas abiertas en `DISENO.md` §15.
