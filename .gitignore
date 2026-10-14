@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Node (aunque el juego no usa paquetes)
+node_modules/
+
+# Editores
+.vscode/
+.idea/
+
+# Claude Code: configuración local
+.claude/settings.local.json

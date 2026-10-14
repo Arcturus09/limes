@@ -1,0 +1,28 @@
+/* Tokens de color y tipografía de Limes (DISENO.md §12).
+   Solo se usan estas variables: no se inventan colores en otros archivos. */
+:root {
+  --pergamino: #EFE4CB;         /* fondo del mapa y los documentos */
+  --pergamino-oscuro: #D9C8A3;  /* paneles, casillas de bosque */
+  --tinta: #2B2118;             /* texto y líneas principales */
+  --tinta-suave: #6B5640;       /* texto secundario y rejilla */
+  --purpura: #5B1A3A;           /* Roma: sellos, barra de Favor */
+  --oliva: #5E6B2E;             /* Pueblo: barra de Pueblo, asentamientos */
+  --minio: #A33A1F;             /* solo amenazas y avisos */
+  --oro: #A8832F;               /* selección y detalles de sello */
+  --rio: #6E8A8F;               /* agua */
+  --mesa: #1E1813;              /* fondo de la página alrededor del pergamino */
+
+  --fuente-inscripcion: "Cinzel", serif;
+  --fuente-texto: "Alegreya", serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--mesa);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-variant-numeric: lining-nums tabular-nums;
+}
