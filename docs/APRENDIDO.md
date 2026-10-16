@@ -13,3 +13,7 @@ Así `render-map.js` pide `hexToPixel` a `hex.js` sin copiarlo, y si lo cambias 
 ## Remoto y push (git)
 Tu carpeta es tu cuaderno; GitHub es una copia en la nube. `git remote add origin …` apunta la dirección de esa copia y `git push` sube los commits.
 GitHub Pages lee esa copia y la sirve como web, así que cada push actualiza el enlace público en un par de minutos.
+
+## Un único objeto de estado (`state.js`)
+Toda la partida (estación, grano, denarios, legiones) cabe en un solo objeto, como una foto del tablero tomada desde arriba.
+Con esa foto puedes guardar (convertirla en texto con JSON), deshacer (volver a la foto anterior) y repetir una partida. Por eso el estado no lleva funciones ni clases: solo datos.

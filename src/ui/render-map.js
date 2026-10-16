@@ -23,7 +23,18 @@ function dibujarTrama(terreno) {
       g.append(el("path", { d: `M${x} ${y + 6} v6` }));
     }
   } else if (terreno === "c") {
-    for (const y of [-8, 2, 12]) g.append(el("path", { d: `M-16 ${y} q8 -10 16 0 q8 -10 16 0` }));
+    // Dos montículos con hachures: trazos cortos que bajan desde la cima, sin ondas que recuerden al agua
+    for (const [cx, cy, radio, trazos] of [[-9, 4, 8, 7], [12, 10, 5, 5]]) {
+      for (let i = 0; i < trazos; i++) {
+        // Abanico de unos 135° sobre la cima: los extremos casi horizontales parecían ondas
+        const angulo = Math.PI * (1.125 + (0.75 * i) / (trazos - 1));
+        const dx = Math.cos(angulo);
+        const dy = Math.sin(angulo);
+        g.append(el("path", {
+          d: `M${(cx + dx * radio).toFixed(1)} ${(cy + dy * radio).toFixed(1)} L${(cx + dx * (radio + 5)).toFixed(1)} ${(cy + dy * (radio + 5)).toFixed(1)}`,
+        }));
+      }
+    }
   } else if (terreno === "V") {
     for (const y of [-6, 6]) g.append(el("path", { d: `M-18 ${y} q6 -6 12 0 t12 0 t12 0` }));
   } else if (terreno === "A") {
@@ -53,6 +64,9 @@ export function renderMap(contenedor, mapa, alElegir) {
 
   const mundo = el("g", { transform: `translate(${MARGEN + SIZE * Math.sqrt(3) / 2} ${MARGEN + BANDA_RIO + SIZE})` });
   svg.append(mundo);
+  // Capa de fichas: encima de las casillas y debajo de los nombres
+  const fichas = el("g", { class: "fichas", transform: mundo.getAttribute("transform") });
+  svg.append(fichas);
   // Capa de nombres por encima de todas las casillas, para que ningún vecino los tape
   const etiquetas = el("g", { class: "etiquetas", transform: mundo.getAttribute("transform") });
   svg.append(etiquetas);
@@ -95,4 +109,21 @@ export function renderMap(contenedor, mapa, alElegir) {
   });
 
   contenedor.replaceChildren(svg);
+  return { fichas };
+}
+
+// Dibuja las legiones como fichas rectangulares (aspecto feo de la Fase 1).
+// Se puede llamar cada vez que cambie el estado: vacía la capa y la rehace.
+export function renderLegions(capa, legions) {
+  capa.replaceChildren();
+  for (const legion of legions) {
+    const centro = hexToPixel(legion, SIZE);
+    const texto = `${legion.short.toUpperCase()} · ${legion.strength}`;
+    const ancho = texto.length * 5.6 + 10;
+    // Algo por encima del centro, para no tapar el nombre del lugar
+    const g = el("g", { class: "ficha", transform: `translate(${centro.x.toFixed(1)} ${(centro.y - 8).toFixed(1)})` });
+    g.append(el("rect", { x: (-ancho / 2).toFixed(1), y: -9, width: ancho.toFixed(1), height: 18 }));
+    g.append(el("text", { x: 0, y: 4, "text-anchor": "middle" }, [texto]));
+    capa.append(g);
+  }
 }

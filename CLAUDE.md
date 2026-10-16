@@ -91,6 +91,7 @@ Limes/
 │   ├── data/
 │   │   ├── maps/prototype.js
 │   │   ├── units.js
+│   │   ├── game.js           recursos iniciales y calendario
 │   │   ├── threats.js
 │   │   ├── edicts.js
 │   │   ├── events.js
@@ -239,7 +240,7 @@ Aquí vale el aspecto feo: fichas como cuadrados con texto. **No pulir.**
 
 ## 14. Estado actual
 
-- **Fase:** 0, terminada. Falta la revisión de fase solo si Arturo quiere; el criterio «enlace público con el mapa» se cumple.
-- **Último paso terminado:** 0.3. Repositorio `Arcturus09/limes`, remoto `origin` y Pages activo: <https://arcturus09.github.io/limes/>. `gh` no está instalado: el push lo hace Arturo desde su terminal.
-- **Siguiente paso:** 1.1 (estado inicial, recursos, legiones en el mapa y barra superior).
-- **Pendiente de Arturo:** nada que bloquee. Preguntas abiertas en `DISENO.md` §15.
+- **Fase:** 1, en curso.
+- **Último paso terminado:** 1.1. `state.js` (`createInitialState`, `seasonLabel`), datos en `units.js` y `game.js`, barra superior (`render-hud.js`) y fichas de legión (`renderLegions` en `render-map.js`). Colinas con hachures en vez de ondas. Pages: <https://arcturus09.github.io/limes/>; el push lo hace Arturo (`gh` no está instalado).
+- **Siguiente paso:** 1.2 (mover legiones con coste de terreno, casillas alcanzables y deshacer).
+- **Pendiente de Arturo:** confirmar o cambiar los nombres provisionales *Numerus de Batavis* y *Cohors de Favianis* (`units.js`). Preguntas abiertas en `DISENO.md` §15.
