@@ -239,7 +239,7 @@ Aquí vale el aspecto feo: fichas como cuadrados con texto. **No pulir.**
 
 ## 14. Estado actual
 
-- **Fase:** 0, en marcha.
-- **Último paso terminado:** 0.2 (`hex.js` con 8 tests, mapa del prototipo en `src/data/maps/prototype.js`, `render-map.js` con tramas SVG, clic y teclado, y `main.js`). Los filtros de pergamino y trazo a mano quedan para 3.7.
-- **Siguiente paso:** 0.3 (repositorio en GitHub y Pages; `gh` aún sin comprobar).
+- **Fase:** 0, terminada. Falta la revisión de fase solo si Arturo quiere; el criterio «enlace público con el mapa» se cumple.
+- **Último paso terminado:** 0.3. Repositorio `Arcturus09/limes`, remoto `origin` y Pages activo: <https://arcturus09.github.io/limes/>. `gh` no está instalado: el push lo hace Arturo desde su terminal.
+- **Siguiente paso:** 1.1 (estado inicial, recursos, legiones en el mapa y barra superior).
 - **Pendiente de Arturo:** nada que bloquee. Preguntas abiertas en `DISENO.md` §15.
