@@ -23,11 +23,13 @@ function dibujarTrama(terreno) {
       g.append(el("path", { d: `M${x} ${y + 6} v6` }));
     }
   } else if (terreno === "c") {
-    // Dos lomas dibujadas como arcos, con trazos cortos en la ladera (como en los mapas antiguos).
-    // Un abanico de rayos parecía un sol; un contorno cerrado se lee como "bulto".
-    g.append(el("path", { d: "M-28 10 Q-15 -16 -2 10" }));
-    g.append(el("path", { d: "M2 14 Q14 -8 26 14" }));
-    for (const d of ["M-8 4 v5", "M-5 7 v3", "M18 7 v5", "M21 9.5 v3"]) g.append(el("path", { d }));
+    // Dos lomas anchas que se solapan. La de delante lleva relleno del color del terreno
+    // (clase "relleno") para tapar el arco de la de atrás: así no se dibuja lo que queda oculto.
+    g.append(el("path", { d: "M-32 12 Q-14 -18 6 12" }));
+    for (const d of ["M-12 0 v5", "M-8 2 v5", "M-4 4 v4"]) g.append(el("path", { d }));
+    g.append(el("path", { class: "relleno", d: "M-6 14 Q14 -10 32 14 Z" }));
+    g.append(el("path", { d: "M-6 14 Q14 -10 32 14" }));
+    for (const d of ["M18 6 v5", "M22 8 v5", "M26 10.5 v3"]) g.append(el("path", { d }));
   } else if (terreno === "V") {
     for (const y of [-6, 6]) g.append(el("path", { d: `M-18 ${y} q6 -6 12 0 t12 0 t12 0` }));
   } else if (terreno === "A") {

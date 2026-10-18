@@ -53,6 +53,7 @@ body { min-width: 1024px; min-height: 700px; }
 .casilla.terreno-b polygon, .casilla.terreno-c polygon { fill: var(--pergamino-oscuro); }
 .casilla.terreno-V polygon { fill: var(--pergamino); }
 .casilla .trama { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.casilla .trama .relleno { fill: var(--pergamino-oscuro); stroke: none; }
 .casilla.terreno-V .trama { stroke: var(--rio); }
 .casilla.terreno-A .trama, .casilla.terreno-C .trama { stroke: var(--oliva); }
 
