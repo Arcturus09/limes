@@ -23,18 +23,11 @@ function dibujarTrama(terreno) {
       g.append(el("path", { d: `M${x} ${y + 6} v6` }));
     }
   } else if (terreno === "c") {
-    // Dos montículos con hachures: trazos cortos que bajan desde la cima, sin ondas que recuerden al agua
-    for (const [cx, cy, radio, trazos] of [[-9, 4, 8, 7], [12, 10, 5, 5]]) {
-      for (let i = 0; i < trazos; i++) {
-        // Abanico de unos 135° sobre la cima: los extremos casi horizontales parecían ondas
-        const angulo = Math.PI * (1.125 + (0.75 * i) / (trazos - 1));
-        const dx = Math.cos(angulo);
-        const dy = Math.sin(angulo);
-        g.append(el("path", {
-          d: `M${(cx + dx * radio).toFixed(1)} ${(cy + dy * radio).toFixed(1)} L${(cx + dx * (radio + 5)).toFixed(1)} ${(cy + dy * (radio + 5)).toFixed(1)}`,
-        }));
-      }
-    }
+    // Dos lomas dibujadas como arcos, con trazos cortos en la ladera (como en los mapas antiguos).
+    // Un abanico de rayos parecía un sol; un contorno cerrado se lee como "bulto".
+    g.append(el("path", { d: "M-28 10 Q-15 -16 -2 10" }));
+    g.append(el("path", { d: "M2 14 Q14 -8 26 14" }));
+    for (const d of ["M-8 4 v5", "M-5 7 v3", "M18 7 v5", "M21 9.5 v3"]) g.append(el("path", { d }));
   } else if (terreno === "V") {
     for (const y of [-6, 6]) g.append(el("path", { d: `M-18 ${y} q6 -6 12 0 t12 0 t12 0` }));
   } else if (terreno === "A") {
