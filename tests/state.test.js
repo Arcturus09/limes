@@ -24,6 +24,7 @@ test("hay 3 legiones con fuerza 3 en Lauriacum, Batavis y Favianis", () => {
   assert.equal(legions.length, 3);
   for (const l of legions) assert.equal(l.strength, 3);
   assert.deepEqual(legions.map((l) => [l.fila, l.col]), [[3, 4], [1, 0], [1, 8]]);
+  for (const l of legions) assert.equal(l.movesLeft, 2);
   assert.equal(legions[0].name, "Legio II Italica");
   assert.equal(new Set(legions.map((l) => l.id)).size, 3);
   assert.equal(new Set(legions.map((l) => l.name)).size, 3);

@@ -17,3 +17,8 @@ GitHub Pages lee esa copia y la sirve como web, así que cada push actualiza el 
 ## Un único objeto de estado (`state.js`)
 Toda la partida (estación, grano, denarios, legiones) cabe en un solo objeto, como una foto del tablero tomada desde arriba.
 Con esa foto puedes guardar (convertirla en texto con JSON), deshacer (volver a la foto anterior) y repetir una partida. Por eso el estado no lleva funciones ni clases: solo datos.
+
+## Función pura y deshacer (`actions.js`, `history.js`)
+Una función pura es como una fotocopiadora con retoque: le das el estado, te devuelve **otra copia** con el cambio hecho y la original queda intacta.
+Por eso deshacer es gratis: basta con guardar las copias viejas en una pila y volver a la anterior. Si la función modificara la original, no habría a qué volver.
+

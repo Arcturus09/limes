@@ -11,9 +11,9 @@ body { min-width: 1024px; min-height: 700px; }
   padding: 1rem;
 }
 
-#barra, #mapa {
+#barra, #mapa, #acciones {
   /* El ancho se limita por la altura disponible para que el mapa nunca desborde */
-  width: min(100%, calc((100vh - 8rem) * 1.55));
+  width: min(100%, calc((100vh - 11rem) * 1.55));
 }
 
 #barra {
@@ -59,9 +59,11 @@ body { min-width: 1024px; min-height: 700px; }
 
 .casilla:hover polygon { stroke: var(--tinta); stroke-width: 2; }
 .casilla:focus-visible polygon { stroke: var(--oro); stroke-width: 3; }
-.casilla.elegida polygon { stroke: var(--oro); stroke-width: 4; }
+.casilla.alcanzable polygon { stroke: var(--oro); stroke-width: 2.5; stroke-dasharray: 6 4; }
+.casilla.elegida polygon { stroke: var(--oro); stroke-width: 4; stroke-dasharray: none; }
 
 .fichas { pointer-events: none; }
+.ficha.elegida rect { stroke: var(--oro); stroke-width: 3; }
 .ficha rect { fill: var(--pergamino); stroke: var(--tinta); stroke-width: 1.5; }
 .ficha text {
   fill: var(--tinta);
@@ -77,3 +79,18 @@ body { min-width: 1024px; min-height: 700px; }
   letter-spacing: 0.12em;
   pointer-events: none;
 }
+
+/* ---- Acciones (abajo) ---- */
+#acciones { display: flex; justify-content: flex-start; gap: 0.75rem; }
+#acciones button {
+  background: var(--pergamino);
+  color: var(--tinta);
+  border: 2px solid var(--tinta);
+  padding: 0.3rem 1rem;
+  font-family: var(--fuente-inscripcion);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+#acciones button:hover:not(:disabled) { border-color: var(--oro); }
+#acciones button:focus-visible { outline: 3px solid var(--oro); outline-offset: 2px; }
+#acciones button:disabled { opacity: 0.4; cursor: default; }

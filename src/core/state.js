@@ -19,6 +19,7 @@ export function createInitialState(seed, data) {
       fila: l.fila,
       col: l.col,
       strength: unidades.legion.fuerzaInicial,
+      movesLeft: unidades.legion.movimiento, // se repone al empezar cada estación (paso 1.3)
       victories: 0,
     })),
   };

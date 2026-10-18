@@ -89,12 +89,7 @@ export function renderMap(contenedor, mapa, alElegir) {
         }, [lugar.nombre.toUpperCase()]));
       }
 
-      const elegir = () => {
-        svg.querySelectorAll(".casilla.elegida").forEach((c) => c.classList.remove("elegida"));
-        g.classList.add("elegida");
-        mundo.append(g); // se pinta la última para que su borde no quede tapado por los vecinos
-        alElegir({ fila, col });
-      };
+      const elegir = () => alElegir({ fila, col });
       g.addEventListener("click", elegir);
       g.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); elegir(); }
@@ -104,19 +99,38 @@ export function renderMap(contenedor, mapa, alElegir) {
   });
 
   contenedor.replaceChildren(svg);
-  return { fichas };
+
+  // Marca la casilla elegida y las alcanzables. Lo llama main.js tras cada cambio,
+  // así el mapa se dibuja una sola vez y el foco del teclado no se pierde.
+  function marcar(elegida, alcanzables = []) {
+    const clave = (h) => `${h.fila},${h.col}`;
+    const alcanzablesSet = new Set(alcanzables.map(clave));
+    const casillas = [...svg.querySelectorAll(".casilla")];
+    const foco = document.activeElement;
+    for (const c of casillas) {
+      const k = clave({ fila: c.dataset.fila, col: c.dataset.col });
+      c.classList.toggle("alcanzable", alcanzablesSet.has(k));
+      c.classList.toggle("elegida", Boolean(elegida) && k === clave(elegida));
+    }
+    // Se pintan las últimas para que sus bordes no queden tapados por los vecinos
+    for (const c of casillas.filter((x) => x.classList.contains("alcanzable"))) mundo.append(c);
+    for (const c of casillas.filter((x) => x.classList.contains("elegida"))) mundo.append(c);
+    if (foco && foco.classList && foco.classList.contains("casilla")) foco.focus(); // mover el nodo quita el foco
+  }
+
+  return { fichas, marcar };
 }
 
 // Dibuja las legiones como fichas rectangulares (aspecto feo de la Fase 1).
 // Se puede llamar cada vez que cambie el estado: vacía la capa y la rehace.
-export function renderLegions(capa, legions) {
+export function renderLegions(capa, legions, elegidaId = null) {
   capa.replaceChildren();
   for (const legion of legions) {
     const centro = hexToPixel(legion, SIZE);
     const texto = `${legion.short.toUpperCase()} · ${legion.strength}`;
     const ancho = texto.length * 5.6 + 10;
     // Algo por encima del centro, para no tapar el nombre del lugar
-    const g = el("g", { class: "ficha", transform: `translate(${centro.x.toFixed(1)} ${(centro.y - 8).toFixed(1)})` });
+    const g = el("g", { class: legion.id === elegidaId ? "ficha elegida" : "ficha", transform: `translate(${centro.x.toFixed(1)} ${(centro.y - 8).toFixed(1)})` });
     g.append(el("rect", { x: (-ancho / 2).toFixed(1), y: -9, width: ancho.toFixed(1), height: 18 }));
     g.append(el("text", { x: 0, y: 4, "text-anchor": "middle" }, [texto]));
     capa.append(g);

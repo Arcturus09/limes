@@ -81,6 +81,8 @@ Limes/
 │   ├── core/
 │   │   ├── state.js          createInitialState(seed, data)
 │   │   ├── actions.js        applyAction(state, action) → nuevo estado
+│   │   ├── movement.js       reachableHexes(): casillas alcanzables con los puntos que quedan
+│   │   ├── history.js        pila de deshacer (funciones puras)
 │   │   ├── turn.js           endSeason(state): combates, saqueos, crónica, amenazas
 │   │   ├── combat.js         previewCombat() y resolveCombat(), la misma función para ambos
 │   │   ├── threats.js        elegir vado y objetivo, anunciar
@@ -241,6 +243,6 @@ Aquí vale el aspecto feo: fichas como cuadrados con texto. **No pulir.**
 ## 14. Estado actual
 
 - **Fase:** 1, en curso.
-- **Último paso terminado:** 1.1. `state.js` (`createInitialState`, `seasonLabel`), datos en `units.js` y `game.js`, barra superior (`render-hud.js`) y fichas de legión (`renderLegions` en `render-map.js`). Colinas con hachures en vez de ondas. Pages: <https://arcturus09.github.io/limes/>; el push lo hace Arturo (`gh` no está instalado).
-- **Siguiente paso:** 1.2 (mover legiones con coste de terreno, casillas alcanzables y deshacer).
-- **Pendiente de Arturo:** confirmar o cambiar los nombres provisionales *Numerus de Batavis* y *Cohors de Favianis* (`units.js`). Preguntas abiertas en `DISENO.md` §15.
+- **Último paso terminado:** 1.2. Mover legiones (`movement.js`, `actions.js` con la acción `move`), deshacer (`history.js`, botón y tecla Z), Esc deselecciona (`input.js`). Elegir una legión marca sus casillas alcanzables (borde discontinuo dorado); pulsar una de ellas la mueve. `renderMap` se dibuja una sola vez y `marcar()` actualiza la selección. Cada legión lleva `movesLeft`; **hay que reponerlo a `movimiento` al empezar cada estación (paso 1.3)** y llamar a `clearHistory` al cerrarla. Pages: <https://arcturus09.github.io/limes/>; el push lo hace Arturo.
+- **Siguiente paso:** 1.3 (cerrar la estación: ingresos, mantenimiento, hambre y cambio de estación; botón y Espacio).
+- **Pendiente de Arturo:** confirmar o cambiar los valores `⚖ PROVISIONAL`: nombres *Numerus de Batavis* y *Cohors de Favianis* (`units.js`); coste 1 de vado, aldea y ciudad (`game.js`); hace falta tener puntos para el coste entero de una casilla; dos legiones no pueden compartir casilla ni pasar una por la otra (`movement.js`). Preguntas abiertas en `DISENO.md` §15.
