@@ -57,6 +57,8 @@ body { min-width: 1024px; min-height: 700px; }
 .casilla.terreno-V .trama { stroke: var(--rio); }
 .casilla.terreno-A .trama, .casilla.terreno-C .trama { stroke: var(--oliva); }
 
+.casilla.saqueada polygon { fill: var(--pergamino-oscuro); }
+.casilla.saqueada .trama { stroke: var(--tinta-suave); }
 .casilla:hover polygon { stroke: var(--tinta); stroke-width: 2; }
 .casilla:focus-visible polygon { stroke: var(--oro); stroke-width: 3; }
 .casilla.alcanzable polygon { stroke: var(--oro); stroke-width: 2.5; stroke-dasharray: 6 4; }
@@ -98,6 +100,8 @@ body { min-width: 1024px; min-height: 700px; }
 
 /* Amenazas: lo único en rojo minio (DISENO.md §12) */
 .amenazas { pointer-events: none; }
+.amenaza .banda { pointer-events: all; cursor: help; outline: none; }
+.amenaza .banda:focus-visible rect { stroke: var(--oro); stroke-width: 3; }
 .amenaza .flecha { fill: none; stroke: var(--minio); stroke-width: 2.5; stroke-dasharray: 7 5; }
 .amenaza .punta { fill: var(--minio); }
 .amenaza .banda rect { fill: var(--pergamino); stroke: var(--minio); stroke-width: 2; }

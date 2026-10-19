@@ -15,5 +15,11 @@ export const partida = {
   // La letra es la del mapa: A = aldea, C = ciudad.
   produccion: { A: { grano: 2, denarios: 1 }, C: { grano: 3, denarios: 3 } },
 
+  // Bono de defensa del terreno para quien defiende ahí (DISENO.md §4 y §6). ⚖
+  bonoDefensa: { V: 1, c: 1 },
+
+  // Un asentamiento saqueado no produce durante estas estaciones (DISENO.md §7). ⚖
+  saqueo: { estaciones: 2 },
+
   costeTerreno: { ".": 1, b: 2, c: 2, V: 1, A: 1, C: 1 },
 };

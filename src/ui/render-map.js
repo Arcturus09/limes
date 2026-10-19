@@ -106,14 +106,16 @@ export function renderMap(contenedor, mapa, alElegir) {
 
   // Marca la casilla elegida y las alcanzables. Lo llama main.js tras cada cambio,
   // así el mapa se dibuja una sola vez y el foco del teclado no se pierde.
-  function marcar(elegida, alcanzables = []) {
+  function marcar(elegida, alcanzables = [], saqueadas = []) {
     const clave = (h) => `${h.fila},${h.col}`;
     const alcanzablesSet = new Set(alcanzables.map(clave));
+    const saqueadasSet = new Set(saqueadas.map(clave));
     const casillas = [...svg.querySelectorAll(".casilla")];
     const foco = document.activeElement;
     for (const c of casillas) {
       const k = clave({ fila: c.dataset.fila, col: c.dataset.col });
       c.classList.toggle("alcanzable", alcanzablesSet.has(k));
+      c.classList.toggle("saqueada", saqueadasSet.has(k));
       c.classList.toggle("elegida", Boolean(elegida) && k === clave(elegida));
     }
     // Se pintan las últimas para que sus bordes no queden tapados por los vecinos
@@ -143,7 +145,7 @@ export function renderLegions(capa, legions, elegidaId = null) {
 
 // Dibuja cada banda anunciada: ficha en el Danubio frente a su vado y flecha curva
 // discontinua hasta el objetivo. Como las legiones, se rehace entera cada vez.
-export function renderThreats(capa, threats) {
+export function renderThreats(capa, threats, onHover = () => {}) {
   capa.replaceChildren();
   for (const t of threats) {
     const vado = hexToPixel(t.vado, SIZE);
@@ -169,9 +171,14 @@ export function renderThreats(capa, threats) {
     const g = el("g", { class: "amenaza" });
     g.append(el("path", { class: "flecha", d: `M${ini.x.toFixed(1)} ${(ini.y + 10).toFixed(1)} Q${ctrl.x.toFixed(1)} ${ctrl.y.toFixed(1)} ${fin.x.toFixed(1)} ${fin.y.toFixed(1)}` }));
     g.append(el("polygon", { class: "punta", points: punta }));
-    const ficha = el("g", { class: "banda", transform: `translate(${ini.x.toFixed(1)} ${ini.y.toFixed(1)})` });
+    const ficha = el("g", { class: "banda", tabindex: 0, role: "button", "aria-label": `Banda de fuerza ${t.strength}: ver resultado previsto`, transform: `translate(${ini.x.toFixed(1)} ${ini.y.toFixed(1)})` });
     ficha.append(el("rect", { x: -20, y: -10, width: 40, height: 20 }));
     ficha.append(el("text", { x: 0, y: 4.5, "text-anchor": "middle" }, [String(t.strength)]));
+    // Pasar el ratón (o enfocar con el teclado) enseña el resultado previsto
+    ficha.addEventListener("mouseenter", () => onHover(t.id));
+    ficha.addEventListener("focus", () => onHover(t.id));
+    ficha.addEventListener("mouseleave", () => onHover(null));
+    ficha.addEventListener("blur", () => onHover(null));
     g.append(ficha);
     capa.append(g);
   }

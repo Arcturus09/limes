@@ -6,6 +6,7 @@ import { partida } from "./data/game.js";
 import { amenazas } from "./data/threats.js";
 import { createInitialState, seasonLabel } from "./core/state.js";
 import { applyAction } from "./core/actions.js";
+import { previewThreats } from "./core/combat.js";
 import { reachableHexes } from "./core/movement.js";
 import { createHistory, perform, undo, canUndo, clearHistory } from "./core/history.js";
 import { renderMap, renderLegions, renderThreats } from "./ui/render-map.js";
@@ -46,6 +47,22 @@ function describirBanda(t) {
   return `Banda de fuerza ${t.strength} por el vado de la columna ${t.vado.col}, rumbo a ${nombreLugar(t.objetivo)}.`;
 }
 
+// Una frase por combate: "Vado: defensa 4 contra 3 → victoria (−1 de fuerza)"
+function describirPaso(p, nombre) {
+  if (!p.fought) return `${nombre}: sin legiones, la banda pasa`;
+  const perdidas = p.losses.map((x) => `${x.name} −${x.amount}`).join(", ") || "sin pérdidas";
+  const res = p.victory ? "victoria, la banda se deshace" : `derrota, a la banda le quedan ${p.bandLeft}`;
+  return `${nombre}: defensa ${p.defense} contra ${p.strength} → ${res} (${perdidas})`;
+}
+
+function describirInforme(r) {
+  const lugares = ["el vado", nombreLugar(r.objetivo)];
+  const partes = r.steps.map((p, i) => describirPaso(p, lugares[i]));
+  const fin = r.looted ? `Saquea ${nombreLugar(r.objetivo)}.` : "No saquea nada.";
+  const caidas = r.fallen.length ? ` Caen: ${r.fallen.join(", ")}.` : "";
+  return `Banda de ${r.strength}: ${partes.join("; ")}. ${fin}${caidas}`;
+}
+
 // Texto del resumen de la estación que acaba de empezar (la crónica llega en la Fase 2)
 function describirEstacion(state) {
   const { estacion, anyo } = seasonLabel(state.season, partida);
@@ -54,6 +71,7 @@ function describirEstacion(state) {
   texto += ` · mantenimiento −${upkeep.grain} grano y −${upkeep.denarii} denarios.`;
   if (shortage) texto += " Faltan provisiones: cada legión pierde 1 de fuerza.";
   if (deserted.length > 0) texto += ` Desaparece: ${deserted.join(", ")}.`;
+  for (const r of state.lastSeason.battles) texto += ` ${describirInforme(r)}`;
   for (const t of state.threats) texto += ` ${describirBanda(t)}`;
   return texto;
 }
@@ -62,11 +80,18 @@ function dibujar() {
   const state = history.present;
   renderHud(document.getElementById("barra"), state, partida);
   renderLegions(fichas, state.legions, legionElegida);
-  renderThreats(capaAmenazas, state.threats);
+  renderThreats(capaAmenazas, state.threats, alPrever);
   const alcanzables = legionElegida ? reachableHexes(state, legionElegida, datos) : [];
-  marcar(casillaElegida, alcanzables);
+  marcar(casillaElegida, alcanzables, state.looted);
   info.textContent = casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
   botonDeshacer.disabled = !canUndo(history);
+}
+
+// Solo cambia el texto: no se rehace el mapa, para no perder el ratón sobre la ficha
+function alPrever(id) {
+  const state = history.present;
+  const informe = id && previewThreats(state, datos).find((r) => r.id === id);
+  info.textContent = informe ? `Previsto: ${describirInforme(informe)}` : casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
 }
 
 function alElegir(hex) {

@@ -30,3 +30,6 @@ Así puedes cambiar un número sin tocar ni una regla, y el código nunca lleva 
 ## Generador con semilla (`rng.js`)
 Es un dado trucado de forma honesta: la semilla es su posición en una lista larguísima de números que parecen azar pero están fijados de antemano.
 Con la misma semilla salen siempre los mismos vados, así que una partida se puede repetir y los tests pueden comprobar resultados exactos. Cada tirada devuelve también la semilla siguiente, y el estado la guarda.
+
+## Previsión y resolución con la misma función
+Imagina un ensayo general con el vestuario real: `previewThreats` ejecuta exactamente el mismo código que cierra la estación, pero tira el resultado y solo enseña el informe. Como no hay dos versiones de la regla, la previsión no puede mentir. Esto es posible porque el núcleo es puro: copia el estado en vez de modificarlo.

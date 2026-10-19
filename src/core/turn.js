@@ -1,24 +1,30 @@
 // Cerrar la estación: pasa a la siguiente, cobra los ingresos y paga el mantenimiento
 // (DISENO.md §3 y §6). Función pura: devuelve otro estado y deja el original intacto.
-// Los combates y los saqueos se añaden en el paso 1.5.
+// Primero las bandas anunciadas atacan (combates y saqueos); luego empieza la estación siguiente.
 import { announceThreats } from "./threats.js";
+import { resolveThreats } from "./combat.js";
 
 // data = { mapa, unidades, partida }
 export function endSeason(state, data) {
   const { mapa, unidades, partida } = data;
-  const next = structuredClone(state);
+  // 0. Las bandas de la estación que acaba cruzan y combaten
+  const { state: next, reports } = resolveThreats(state, data);
   next.season += 1;
 
   // 1. Ingresos de los asentamientos del mapa
   const income = { grain: 0, denarii: 0 };
-  for (const fila of mapa.filas) {
-    for (const terreno of fila) {
+  mapa.filas.forEach((fila, f) => {
+    [...fila].forEach((terreno, c) => {
       const produce = partida.produccion[terreno];
-      if (!produce) continue;
+      if (!produce) return;
+      if (next.looted.some((h) => h.fila === f && h.col === c)) return; // saqueado: no produce
       income.grain += produce.grano;
       income.denarii += produce.denarios;
-    }
-  }
+    });
+  });
+  // Cada ingreso acerca al asentamiento saqueado a recuperarse
+  for (const h of next.looted) h.seasonsLeft -= 1;
+  next.looted = next.looted.filter((h) => h.seasonsLeft > 0);
   next.resources.grain += income.grain;
   next.resources.denarii += income.denarii;
 
@@ -51,6 +57,6 @@ export function endSeason(state, data) {
   next.threats = anuncio.threats;
   next.seed = anuncio.seed;
 
-  next.lastSeason = { income, upkeep: pagado, shortage: faltaAlgo, deserted: desertadas };
+  next.lastSeason = { income, upkeep: pagado, shortage: faltaAlgo, deserted: desertadas, battles: reports };
   return next;
 }

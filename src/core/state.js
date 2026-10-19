@@ -8,7 +8,7 @@ export function createInitialState(seed, data) {
     seed,
     season: 0,
     threats: [], // bandas anunciadas para la estación en curso (la 1 no trae ninguna)
-    looted: [], // asentamientos saqueados { fila, col } (los rellena el combate en el 1.5)
+    looted: [], // asentamientos saqueados { fila, col, seasonsLeft } (los rellena el combate)
     lastSeason: null, // resumen de la última estación cerrada (lo rellena endSeason)
     resources: {
       grain: partida.recursosIniciales.grano,
