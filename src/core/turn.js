@@ -1,6 +1,7 @@
 // Cerrar la estación: pasa a la siguiente, cobra los ingresos y paga el mantenimiento
 // (DISENO.md §3 y §6). Función pura: devuelve otro estado y deja el original intacto.
 // Los combates y los saqueos se añaden en el paso 1.5.
+import { announceThreats } from "./threats.js";
 
 // data = { mapa, unidades, partida }
 export function endSeason(state, data) {
@@ -44,6 +45,11 @@ export function endSeason(state, data) {
 
   // 4. Cada legión recupera sus puntos de movimiento
   for (const legion of next.legions) legion.movesLeft = unidades.legion.movimiento;
+
+  // 5. Se anuncian las bandas de la estación que empieza (y la semilla avanza)
+  const anuncio = announceThreats(next, data);
+  next.threats = anuncio.threats;
+  next.seed = anuncio.seed;
 
   next.lastSeason = { income, upkeep: pagado, shortage: faltaAlgo, deserted: desertadas };
   return next;

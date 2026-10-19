@@ -62,6 +62,9 @@ export function renderMap(contenedor, mapa, alElegir) {
   // Capa de fichas: encima de las casillas y debajo de los nombres
   const fichas = el("g", { class: "fichas", transform: mundo.getAttribute("transform") });
   svg.append(fichas);
+  // Capa de amenazas: flechas y fichas de bandas, encima de las legiones
+  const amenazas = el("g", { class: "amenazas", transform: mundo.getAttribute("transform") });
+  svg.append(amenazas);
   // Capa de nombres por encima de todas las casillas, para que ningún vecino los tape
   const etiquetas = el("g", { class: "etiquetas", transform: mundo.getAttribute("transform") });
   svg.append(etiquetas);
@@ -119,7 +122,7 @@ export function renderMap(contenedor, mapa, alElegir) {
     if (foco && foco.classList && foco.classList.contains("casilla")) foco.focus(); // mover el nodo quita el foco
   }
 
-  return { fichas, marcar };
+  return { fichas, amenazas, marcar };
 }
 
 // Dibuja las legiones como fichas rectangulares (aspecto feo de la Fase 1).
@@ -134,6 +137,42 @@ export function renderLegions(capa, legions, elegidaId = null) {
     const g = el("g", { class: legion.id === elegidaId ? "ficha elegida" : "ficha", transform: `translate(${centro.x.toFixed(1)} ${(centro.y - 8).toFixed(1)})` });
     g.append(el("rect", { x: (-ancho / 2).toFixed(1), y: -9, width: ancho.toFixed(1), height: 18 }));
     g.append(el("text", { x: 0, y: 4, "text-anchor": "middle" }, [texto]));
+    capa.append(g);
+  }
+}
+
+// Dibuja cada banda anunciada: ficha en el Danubio frente a su vado y flecha curva
+// discontinua hasta el objetivo. Como las legiones, se rehace entera cada vez.
+export function renderThreats(capa, threats) {
+  capa.replaceChildren();
+  for (const t of threats) {
+    const vado = hexToPixel(t.vado, SIZE);
+    const meta = hexToPixel(t.objetivo, SIZE);
+    const ini = { x: vado.x, y: -SIZE - 26 }; // en la franja del río, sobre el vado
+    // La flecha acaba antes del centro para no tapar el nombre ni la trama del asentamiento
+    const dx = meta.x - ini.x;
+    const dy = meta.y - ini.y;
+    const largo = Math.hypot(dx, dy) || 1;
+    const fin = { x: meta.x - (dx / largo) * 16, y: meta.y - (dy / largo) * 16 };
+    const ctrl = { x: (ini.x + fin.x) / 2 + 22 * Math.sign(dy || 1), y: (ini.y + fin.y) / 2 };
+    // Dirección de llegada (del punto de control al final) para orientar la punta
+    const ax = fin.x - ctrl.x;
+    const ay = fin.y - ctrl.y;
+    const al = Math.hypot(ax, ay) || 1;
+    const u = { x: ax / al, y: ay / al };
+    const punta = [
+      `${fin.x.toFixed(1)},${fin.y.toFixed(1)}`,
+      `${(fin.x - u.x * 11 - u.y * 6).toFixed(1)},${(fin.y - u.y * 11 + u.x * 6).toFixed(1)}`,
+      `${(fin.x - u.x * 11 + u.y * 6).toFixed(1)},${(fin.y - u.y * 11 - u.x * 6).toFixed(1)}`,
+    ].join(" ");
+
+    const g = el("g", { class: "amenaza" });
+    g.append(el("path", { class: "flecha", d: `M${ini.x.toFixed(1)} ${(ini.y + 10).toFixed(1)} Q${ctrl.x.toFixed(1)} ${ctrl.y.toFixed(1)} ${fin.x.toFixed(1)} ${fin.y.toFixed(1)}` }));
+    g.append(el("polygon", { class: "punta", points: punta }));
+    const ficha = el("g", { class: "banda", transform: `translate(${ini.x.toFixed(1)} ${ini.y.toFixed(1)})` });
+    ficha.append(el("rect", { x: -20, y: -10, width: 40, height: 20 }));
+    ficha.append(el("text", { x: 0, y: 4.5, "text-anchor": "middle" }, [String(t.strength)]));
+    g.append(ficha);
     capa.append(g);
   }
 }

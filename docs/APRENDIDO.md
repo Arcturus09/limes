@@ -26,3 +26,7 @@ Por eso deshacer es gratis: basta con guardar las copias viejas en una pila y vo
 `turn.js` es la cocina y `game.js` es la receta: la cocina sabe *cómo* cobrar ingresos, pero cuánto da una aldea (+2 grano) está escrito en `game.js`.
 Así puedes cambiar un número sin tocar ni una regla, y el código nunca lleva números sueltos escondidos.
 
+
+## Generador con semilla (`rng.js`)
+Es un dado trucado de forma honesta: la semilla es su posición en una lista larguísima de números que parecen azar pero están fijados de antemano.
+Con la misma semilla salen siempre los mismos vados, así que una partida se puede repetir y los tests pueden comprobar resultados exactos. Cada tirada devuelve también la semilla siguiente, y el estado la guarda.

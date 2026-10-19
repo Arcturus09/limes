@@ -3,16 +3,17 @@
 import { mapaPrototipo } from "./data/maps/prototype.js";
 import { unidades } from "./data/units.js";
 import { partida } from "./data/game.js";
+import { amenazas } from "./data/threats.js";
 import { createInitialState, seasonLabel } from "./core/state.js";
 import { applyAction } from "./core/actions.js";
 import { reachableHexes } from "./core/movement.js";
 import { createHistory, perform, undo, canUndo, clearHistory } from "./core/history.js";
-import { renderMap, renderLegions } from "./ui/render-map.js";
+import { renderMap, renderLegions, renderThreats } from "./ui/render-map.js";
 import { renderHud } from "./ui/render-hud.js";
 import { bindShortcuts } from "./ui/input.js";
 
 const NOMBRES_TERRENO = { ".": "Llanura", b: "Bosque", c: "Colina", V: "Vado", A: "Aldea", C: "Ciudad" };
-const datos = { mapa: mapaPrototipo, unidades, partida };
+const datos = { mapa: mapaPrototipo, unidades, partida, amenazas };
 
 // La semilla sale del reloj aquí, fuera del núcleo, para que el núcleo no tenga azar propio
 let history = createHistory(createInitialState(Date.now(), datos));
@@ -36,6 +37,15 @@ function describirCasilla({ fila, col }) {
   return texto;
 }
 
+function nombreLugar({ fila, col }) {
+  const lugar = mapaPrototipo.lugares.find((l) => l.fila === fila && l.col === col);
+  return lugar ? lugar.nombre : `la casilla (${fila}, ${col})`;
+}
+
+function describirBanda(t) {
+  return `Banda de fuerza ${t.strength} por el vado de la columna ${t.vado.col}, rumbo a ${nombreLugar(t.objetivo)}.`;
+}
+
 // Texto del resumen de la estación que acaba de empezar (la crónica llega en la Fase 2)
 function describirEstacion(state) {
   const { estacion, anyo } = seasonLabel(state.season, partida);
@@ -44,6 +54,7 @@ function describirEstacion(state) {
   texto += ` · mantenimiento −${upkeep.grain} grano y −${upkeep.denarii} denarios.`;
   if (shortage) texto += " Faltan provisiones: cada legión pierde 1 de fuerza.";
   if (deserted.length > 0) texto += ` Desaparece: ${deserted.join(", ")}.`;
+  for (const t of state.threats) texto += ` ${describirBanda(t)}`;
   return texto;
 }
 
@@ -51,6 +62,7 @@ function dibujar() {
   const state = history.present;
   renderHud(document.getElementById("barra"), state, partida);
   renderLegions(fichas, state.legions, legionElegida);
+  renderThreats(capaAmenazas, state.threats);
   const alcanzables = legionElegida ? reachableHexes(state, legionElegida, datos) : [];
   marcar(casillaElegida, alcanzables);
   info.textContent = casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
@@ -103,7 +115,7 @@ function deseleccionar() {
   dibujar();
 }
 
-const { fichas, marcar } = renderMap(document.getElementById("mapa"), mapaPrototipo, alElegir);
+const { fichas, amenazas: capaAmenazas, marcar } = renderMap(document.getElementById("mapa"), mapaPrototipo, alElegir);
 // blur(): tras pulsar un botón, el Espacio no debe volver a pulsarlo
 botonDeshacer.addEventListener("click", () => { deshacer(); botonDeshacer.blur(); });
 botonCerrar.addEventListener("click", () => { cerrarEstacion(); botonCerrar.blur(); });

@@ -95,3 +95,10 @@ body { min-width: 1024px; min-height: 700px; }
 #acciones button:hover:not(:disabled) { border-color: var(--oro); }
 #acciones button:focus-visible { outline: 3px solid var(--oro); outline-offset: 2px; }
 #acciones button:disabled { opacity: 0.4; cursor: default; }
+
+/* Amenazas: lo único en rojo minio (DISENO.md §12) */
+.amenazas { pointer-events: none; }
+.amenaza .flecha { fill: none; stroke: var(--minio); stroke-width: 2.5; stroke-dasharray: 7 5; }
+.amenaza .punta { fill: var(--minio); }
+.amenaza .banda rect { fill: var(--pergamino); stroke: var(--minio); stroke-width: 2; }
+.amenaza .banda text { fill: var(--minio); font-family: var(--fuente-inscripcion); font-size: 13px; font-weight: 700; }
