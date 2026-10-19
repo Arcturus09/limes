@@ -106,3 +106,22 @@ body { min-width: 1024px; min-height: 700px; }
 .amenaza .punta { fill: var(--minio); }
 .amenaza .banda rect { fill: var(--pergamino); stroke: var(--minio); stroke-width: 2; }
 .amenaza .banda text { fill: var(--minio); font-family: var(--fuente-inscripcion); font-size: 13px; font-weight: 700; }
+
+/* ---- Pantalla final ---- */
+#final {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(30, 24, 19, 0.85);
+}
+#final[hidden] { display: none; }
+#final section {
+  background: var(--pergamino); color: var(--tinta); border: 2px solid var(--tinta);
+  padding: 2rem 2.5rem; max-width: 34rem; text-align: center;
+}
+#final h2 { margin: 0 0 1rem; font-family: var(--fuente-inscripcion); letter-spacing: 0.1em; text-transform: uppercase; }
+#final p { margin: 0 0 1rem; }
+#final button {
+  background: var(--purpura); color: var(--pergamino); border: 2px solid var(--tinta);
+  padding: 0.4rem 1.2rem; font-family: var(--fuente-inscripcion); letter-spacing: 0.08em; cursor: pointer;
+}
+#final button:hover { border-color: var(--oro); }
+#final button:focus-visible { outline: 3px solid var(--oro); outline-offset: 2px; }

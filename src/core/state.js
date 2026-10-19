@@ -9,6 +9,10 @@ export function createInitialState(seed, data) {
     season: 0,
     threats: [], // bandas anunciadas para la estación en curso (la 1 no trae ninguna)
     looted: [], // asentamientos saqueados { fila, col, seasonsLeft } (los rellena el combate)
+    ending: null, // null mientras se juega; { type, reason } al terminar (lo fija endSeason)
+    recruitedThisSeason: false, // máximo una recluta por estación
+    recruitCount: 0, // cuántas legiones se han reclutado (elige el siguiente nombre)
+    nextLegionId: unidades.legionesIniciales.length + 1,
     lastSeason: null, // resumen de la última estación cerrada (lo rellena endSeason)
     resources: {
       grain: partida.recursosIniciales.grano,

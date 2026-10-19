@@ -3,6 +3,7 @@
 // Primero las bandas anunciadas atacan (combates y saqueos); luego empieza la estación siguiente.
 import { announceThreats } from "./threats.js";
 import { resolveThreats } from "./combat.js";
+import { checkEnding } from "./endings.js";
 
 // data = { mapa, unidades, partida }
 export function endSeason(state, data) {
@@ -10,6 +11,9 @@ export function endSeason(state, data) {
   // 0. Las bandas de la estación que acaba cruzan y combaten
   const { state: next, reports } = resolveThreats(state, data);
   next.season += 1;
+  next.recruitedThisSeason = false;
+  // El final se comprueba antes de que el saqueo empiece a "curarse" en el paso de ingresos
+  next.ending = checkEnding(next, data);
 
   // 1. Ingresos de los asentamientos del mapa
   const income = { grain: 0, denarii: 0 };

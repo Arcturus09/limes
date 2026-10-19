@@ -17,9 +17,18 @@
     <p id="info">Elige una casilla.</p>
     <footer id="acciones">
       <button id="deshacer" type="button">Deshacer (Z)</button>
+      <button id="reclutar" type="button">Reclutar (6 denarios)</button>
       <button id="cerrar" type="button">Cerrar la estación (Espacio)</button>
     </footer>
   </main>
+  <div id="final" hidden>
+    <section role="dialog" aria-labelledby="final-titulo">
+      <h2 id="final-titulo"></h2>
+      <p id="final-motivo"></p>
+      <p id="final-resumen"></p>
+      <button id="reiniciar" type="button">Nueva partida</button>
+    </section>
+  </div>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

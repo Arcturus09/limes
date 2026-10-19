@@ -33,3 +33,6 @@ Con la misma semilla salen siempre los mismos vados, así que una partida se pue
 
 ## Previsión y resolución con la misma función
 Imagina un ensayo general con el vestuario real: `previewThreats` ejecuta exactamente el mismo código que cierra la estación, pero tira el resultado y solo enseña el informe. Como no hay dos versiones de la regla, la previsión no puede mentir. Esto es posible porque el núcleo es puro: copia el estado en vez de modificarlo.
+
+## Un campo `ending` en vez de un `if` por todas partes
+El estado guarda si la partida terminó (`ending`) en lugar de que cada función lo averigüe por su cuenta. Es como la bandera de meta en una carrera: una sola señal y todos (acciones, botones, pantalla) la obedecen. Añadir un final nuevo en la Fase 2 será tocar solo `endings.js`.

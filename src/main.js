@@ -6,6 +6,7 @@ import { partida } from "./data/game.js";
 import { amenazas } from "./data/threats.js";
 import { createInitialState, seasonLabel } from "./core/state.js";
 import { applyAction } from "./core/actions.js";
+import { recruitCheck } from "./core/recruit.js";
 import { previewThreats } from "./core/combat.js";
 import { reachableHexes } from "./core/movement.js";
 import { createHistory, perform, undo, canUndo, clearHistory } from "./core/history.js";
@@ -24,6 +25,8 @@ let mensaje = null; // resumen de la última estación; se borra al elegir otra 
 
 const info = document.getElementById("info");
 const botonDeshacer = document.getElementById("deshacer");
+const botonReclutar = document.getElementById("reclutar");
+const pantallaFinal = document.getElementById("final");
 const botonCerrar = document.getElementById("cerrar");
 
 function describirCasilla({ fila, col }) {
@@ -84,7 +87,13 @@ function dibujar() {
   const alcanzables = legionElegida ? reachableHexes(state, legionElegida, datos) : [];
   marcar(casillaElegida, alcanzables, state.looted);
   info.textContent = casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
-  botonDeshacer.disabled = !canUndo(history);
+  const fin = state.ending;
+  const recluta = recruitCheck(state, datos);
+  botonDeshacer.disabled = !canUndo(history) || Boolean(fin);
+  botonCerrar.disabled = Boolean(fin);
+  botonReclutar.disabled = !recluta.ok;
+  botonReclutar.title = recluta.ok ? "" : recluta.reason;
+  mostrarFinal(fin, state);
 }
 
 // Solo cambia el texto: no se rehace el mapa, para no perder el ratón sobre la ficha
@@ -92,6 +101,29 @@ function alPrever(id) {
   const state = history.present;
   const informe = id && previewThreats(state, datos).find((r) => r.id === id);
   info.textContent = informe ? `Previsto: ${describirInforme(informe)}` : casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
+}
+
+function mostrarFinal(fin, state) {
+  pantallaFinal.hidden = !fin;
+  if (!fin) return;
+  document.getElementById("final-titulo").textContent = fin.type === "victoria" ? "Has resistido" : "Limes ha caído";
+  document.getElementById("final-motivo").textContent = fin.reason;
+  document.getElementById("final-resumen").textContent = `Estaciones: ${state.season} · legiones en pie: ${state.legions.length}.`;
+  document.getElementById("reiniciar").focus();
+}
+
+function reclutar() {
+  mensaje = null;
+  history = perform(history, applyAction(history.present, { type: "recruit" }, datos));
+  dibujar();
+}
+
+function nuevaPartida() {
+  history = createHistory(createInitialState(Date.now(), datos));
+  legionElegida = null;
+  casillaElegida = null;
+  mensaje = null;
+  dibujar();
 }
 
 function alElegir(hex) {
@@ -126,6 +158,7 @@ function deshacer() {
 
 // Irreversible: al cerrar la estación se vacía el historial y ya no se puede deshacer
 function cerrarEstacion() {
+  if (history.present.ending) return;
   const siguiente = applyAction(history.present, { type: "endSeason" }, datos);
   history = clearHistory(perform(history, siguiente));
   legionElegida = null;
@@ -143,6 +176,8 @@ function deseleccionar() {
 const { fichas, amenazas: capaAmenazas, marcar } = renderMap(document.getElementById("mapa"), mapaPrototipo, alElegir);
 // blur(): tras pulsar un botón, el Espacio no debe volver a pulsarlo
 botonDeshacer.addEventListener("click", () => { deshacer(); botonDeshacer.blur(); });
+botonReclutar.addEventListener("click", () => { reclutar(); botonReclutar.blur(); });
+document.getElementById("reiniciar").addEventListener("click", nuevaPartida);
 botonCerrar.addEventListener("click", () => { cerrarEstacion(); botonCerrar.blur(); });
 bindShortcuts({ undo: deshacer, deselect: deseleccionar, closeSeason: cerrarEstacion });
 dibujar();

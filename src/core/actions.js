@@ -2,9 +2,12 @@
 // nunca se modifica el original, y eso es lo que hace gratis el deshacer.
 import { reachableHexes } from "./movement.js";
 import { endSeason } from "./turn.js";
+import { recruitLegion } from "./recruit.js";
 
 // data = { mapa, unidades, partida }
 export function applyAction(state, action, data) {
+  if (state.ending) return state; // terminada la partida, nada se mueve
+  if (action.type === "recruit") return recruitLegion(state, data);
   if (action.type === "move") return moveLegion(state, action, data);
   if (action.type === "endSeason") return endSeason(state, data);
   return state;
