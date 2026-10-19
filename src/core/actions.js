@@ -1,10 +1,12 @@
 // Las acciones del gobernador. Cada una recibe el estado y devuelve OTRO estado:
 // nunca se modifica el original, y eso es lo que hace gratis el deshacer.
 import { reachableHexes } from "./movement.js";
+import { endSeason } from "./turn.js";
 
 // data = { mapa, unidades, partida }
 export function applyAction(state, action, data) {
   if (action.type === "move") return moveLegion(state, action, data);
+  if (action.type === "endSeason") return endSeason(state, data);
   return state;
 }
 

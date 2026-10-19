@@ -92,7 +92,8 @@ export function renderMap(contenedor, mapa, alElegir) {
       const elegir = () => alElegir({ fila, col });
       g.addEventListener("click", elegir);
       g.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); elegir(); }
+        // Solo Enter: el Espacio cierra la estación (DISENO.md §13)
+        if (e.key === "Enter") { e.preventDefault(); elegir(); }
       });
       mundo.append(g);
     });

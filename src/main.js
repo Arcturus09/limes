@@ -3,10 +3,10 @@
 import { mapaPrototipo } from "./data/maps/prototype.js";
 import { unidades } from "./data/units.js";
 import { partida } from "./data/game.js";
-import { createInitialState } from "./core/state.js";
+import { createInitialState, seasonLabel } from "./core/state.js";
 import { applyAction } from "./core/actions.js";
 import { reachableHexes } from "./core/movement.js";
-import { createHistory, perform, undo, canUndo } from "./core/history.js";
+import { createHistory, perform, undo, canUndo, clearHistory } from "./core/history.js";
 import { renderMap, renderLegions } from "./ui/render-map.js";
 import { renderHud } from "./ui/render-hud.js";
 import { bindShortcuts } from "./ui/input.js";
@@ -18,9 +18,11 @@ const datos = { mapa: mapaPrototipo, unidades, partida };
 let history = createHistory(createInitialState(Date.now(), datos));
 let legionElegida = null; // id de la legión seleccionada
 let casillaElegida = null; // { fila, col }
+let mensaje = null; // resumen de la última estación; se borra al elegir otra cosa
 
 const info = document.getElementById("info");
 const botonDeshacer = document.getElementById("deshacer");
+const botonCerrar = document.getElementById("cerrar");
 
 function describirCasilla({ fila, col }) {
   const terreno = NOMBRES_TERRENO[mapaPrototipo.filas[fila][col]];
@@ -34,17 +36,29 @@ function describirCasilla({ fila, col }) {
   return texto;
 }
 
+// Texto del resumen de la estación que acaba de empezar (la crónica llega en la Fase 2)
+function describirEstacion(state) {
+  const { estacion, anyo } = seasonLabel(state.season, partida);
+  const { income, upkeep, shortage, deserted } = state.lastSeason;
+  let texto = `${estacion} del año ${anyo}: ingresos +${income.grain} grano y +${income.denarii} denarios`;
+  texto += ` · mantenimiento −${upkeep.grain} grano y −${upkeep.denarii} denarios.`;
+  if (shortage) texto += " Faltan provisiones: cada legión pierde 1 de fuerza.";
+  if (deserted.length > 0) texto += ` Desaparece: ${deserted.join(", ")}.`;
+  return texto;
+}
+
 function dibujar() {
   const state = history.present;
   renderHud(document.getElementById("barra"), state, partida);
   renderLegions(fichas, state.legions, legionElegida);
   const alcanzables = legionElegida ? reachableHexes(state, legionElegida, datos) : [];
   marcar(casillaElegida, alcanzables);
-  info.textContent = casillaElegida ? describirCasilla(casillaElegida) : "Elige una casilla.";
+  info.textContent = casillaElegida ? describirCasilla(casillaElegida) : (mensaje || "Elige una casilla.");
   botonDeshacer.disabled = !canUndo(history);
 }
 
 function alElegir(hex) {
+  mensaje = null;
   const state = history.present;
   const legionAhi = state.legions.find((l) => l.fila === hex.fila && l.col === hex.col);
 
@@ -65,10 +79,21 @@ function alElegir(hex) {
 }
 
 function deshacer() {
+  mensaje = null;
   history = undo(history);
   // La selección sigue a la legión, esté donde esté tras deshacer
   const legion = history.present.legions.find((l) => l.id === legionElegida);
   casillaElegida = legion ? { fila: legion.fila, col: legion.col } : casillaElegida;
+  dibujar();
+}
+
+// Irreversible: al cerrar la estación se vacía el historial y ya no se puede deshacer
+function cerrarEstacion() {
+  const siguiente = applyAction(history.present, { type: "endSeason" }, datos);
+  history = clearHistory(perform(history, siguiente));
+  legionElegida = null;
+  casillaElegida = null;
+  mensaje = describirEstacion(siguiente);
   dibujar();
 }
 
@@ -79,6 +104,8 @@ function deseleccionar() {
 }
 
 const { fichas, marcar } = renderMap(document.getElementById("mapa"), mapaPrototipo, alElegir);
-botonDeshacer.addEventListener("click", deshacer);
-bindShortcuts({ undo: deshacer, deselect: deseleccionar });
+// blur(): tras pulsar un botón, el Espacio no debe volver a pulsarlo
+botonDeshacer.addEventListener("click", () => { deshacer(); botonDeshacer.blur(); });
+botonCerrar.addEventListener("click", () => { cerrarEstacion(); botonCerrar.blur(); });
+bindShortcuts({ undo: deshacer, deselect: deseleccionar, closeSeason: cerrarEstacion });
 dibujar();

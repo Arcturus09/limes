@@ -7,6 +7,7 @@ export function createInitialState(seed, data) {
   return {
     seed,
     season: 0,
+    lastSeason: null, // resumen de la última estación cerrada (lo rellena endSeason)
     resources: {
       grain: partida.recursosIniciales.grano,
       denarii: partida.recursosIniciales.denarios,

@@ -22,3 +22,7 @@ Con esa foto puedes guardar (convertirla en texto con JSON), deshacer (volver a 
 Una función pura es como una fotocopiadora con retoque: le das el estado, te devuelve **otra copia** con el cambio hecho y la original queda intacta.
 Por eso deshacer es gratis: basta con guardar las copias viejas en una pila y volver a la anterior. Si la función modificara la original, no habría a qué volver.
 
+## Datos separados de reglas (`game.js` y `turn.js`)
+`turn.js` es la cocina y `game.js` es la receta: la cocina sabe *cómo* cobrar ingresos, pero cuánto da una aldea (+2 grano) está escrito en `game.js`.
+Así puedes cambiar un número sin tocar ni una regla, y el código nunca lleva números sueltos escondidos.
+

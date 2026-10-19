@@ -91,6 +91,7 @@ body { min-width: 1024px; min-height: 700px; }
   letter-spacing: 0.08em;
   cursor: pointer;
 }
+#acciones #cerrar { margin-left: auto; background: var(--purpura); color: var(--pergamino); }
 #acciones button:hover:not(:disabled) { border-color: var(--oro); }
 #acciones button:focus-visible { outline: 3px solid var(--oro); outline-offset: 2px; }
 #acciones button:disabled { opacity: 0.4; cursor: default; }
